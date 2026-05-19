@@ -1,5 +1,6 @@
 package com.sacredBot.listener;
 
+import com.sacredBot.handler.CommandHandler;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,9 +24,10 @@ public class MessageListener extends ListenerAdapter {
 
         String content = event.getMessage().getContentRaw();
 
-        if (content.startsWith(prefix)) {
-            String commandBody = content.substring(prefix.length()).trim();
-            commandHandler.handle(event, commandBody);
-        }
+        if (!content.startsWith(prefix)) return;
+
+        String body = content.substring(prefix.length()).trim();
+
+        commandHandler.handle(event, body);
     }
 }
