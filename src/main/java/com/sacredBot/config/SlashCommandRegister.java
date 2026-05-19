@@ -1,7 +1,9 @@
 package com.sacredBot.config;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -17,8 +19,17 @@ public class SlashCommandRegister implements ApplicationListener<ContextRefreshe
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        jda.upsertCommand(
-                Commands.slash("nukar", "Deleta as últimas 100 mensagens do canal")
+        jda.updateCommands().addCommands(
+
+                Commands.slash("nukar", "Deleta as últimas 100 mensagens do canal"),
+
+                Commands.slash("timeout", "Silencia um membro por um período determinado")
+                        .addOptions(
+                                new OptionData(OptionType.USER, "membro", "Membro a ser silenciado", true),
+                                new OptionData(OptionType.INTEGER, "duracao", "Duração em minutos", true),
+                                new OptionData(OptionType.STRING, "motivo", "Motivo do timeout", false)
+                        )
+
         ).queue();
     }
 }
