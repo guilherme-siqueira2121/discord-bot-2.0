@@ -28,6 +28,12 @@ public class SlashCommandRegister implements ApplicationListener<ContextRefreshe
                                 new OptionData(OptionType.USER, "membro", "Membro a ser silenciado", true),
                                 new OptionData(OptionType.INTEGER, "duracao", "Duração em minutos", true),
                                 new OptionData(OptionType.STRING, "motivo", "Motivo do timeout", false)
+                        ),
+
+                Commands.slash("kick", "Exulsa um membro do servidor")
+                        .addOptions(
+                                new OptionData(OptionType.USER, "membro", "Membro a ser exulsa", true),
+                                new OptionData(OptionType.STRING, "motivo", "Motivo do exulsa", false)
                         )
 
         ).queue();
