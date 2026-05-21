@@ -12,7 +12,7 @@ public class NukarCommand implements Command {
 
     @Override
     public void execute(MessageReceivedEvent event, String[] args) {
-        if (!event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             event.getChannel().sendMessage("Você não tem permissão para usar este comando.").queue();
             return;
         }
