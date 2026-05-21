@@ -13,7 +13,7 @@ public class BanCommand implements Command {
 
     @Override
     public void execute(MessageReceivedEvent event, String[] args) {
-        if (!event.getMember().hasPermission(Permission.BAN_MEMBERS)) {
+        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             event.getChannel().sendMessage("Você não tem permissão para usar este comando.").queue();
             return;
         }
