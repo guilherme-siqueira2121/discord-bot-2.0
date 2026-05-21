@@ -5,8 +5,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
-
 @Component
 public class NukarCommand implements Command {
 
@@ -17,25 +15,32 @@ public class NukarCommand implements Command {
             return;
         }
 
+        TextChannel original = event.getChannel().asTextChannel();
+
         event.getChannel().sendMessage(
-                "⚠️ Tem certeza que deseja deletar as últimas 100 mensagens?\nResponda com `sim` ou `não`."
+                "⚠️ Tem certeza que deseja apagar todo o histórico deste canal?\nResponda com `sim` ou `não`."
         ).queue();
 
         event.getJDA().addEventListener(new ConfirmationListener(event.getAuthor().getId(), confirmed -> {
-            if (confirmed) {
-                TextChannel channel = event.getChannel().asTextChannel();
-                channel.getHistory().retrievePast(100).queue(messages -> {
-                    if (messages.size() == 1) {
-                        messages.get(0).delete().queue();
-                    } else {
-                        channel.deleteMessages(messages).queue();
-                    }
-                    channel.sendMessage("🧨 " + messages.size() + " mensagens deletadas.")
-                            .queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
-                });
-            } else {
-                event.getChannel().sendMessage("❌ Ação cancelada.").queue();
+            if (!confirmed) {
+                original.sendMessage("❌ Ação cancelada.").queue();
+                return;
             }
+
+            original.getGuild().createCopyOfChannel(original)
+                    .setPosition(original.getPositionRaw()) // mantém a posição exata
+                    .queue(clone -> {
+                        TextChannel clonedChannel = (TextChannel) clone;
+
+                        clonedChannel.getManager()
+                                .setPosition(original.getPositionRaw())
+                                .queue();
+
+                        original.delete().queue(
+                                success -> clonedChannel.sendMessage("🧨 Canal limpo com sucesso.").queue(),
+                                error -> clonedChannel.sendMessage("❌ Erro ao deletar o canal original.").queue()
+                        );
+                    });
         }));
     }
 }
