@@ -1,16 +1,14 @@
 package com.sacredBot.service;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
 @Service
 public class AutoModerationService {
 
-    private final List<String> blockedWords;
+    private final WordFilterService wordFilterService;
     private final Pattern linkPattern = Pattern.compile(
             "https?://\\S+|www\\.\\S+|\\S+\\.com\\S*|discord\\.gg/\\S+"
     );
@@ -20,8 +18,8 @@ public class AutoModerationService {
             "cdn.discordapp.com"
     );
 
-    public AutoModerationService(@Value("${discord.blocked-words}") String blockedWords) {
-        this.blockedWords = Arrays.asList(blockedWords.split(","));
+    public AutoModerationService(WordFilterService wordFilterService) {
+        this.wordFilterService = wordFilterService;
     }
 
     public boolean containsLink(String message) {
@@ -33,7 +31,6 @@ public class AutoModerationService {
     }
 
     public boolean containsBlockedWord(String message) {
-        String lower = message.toLowerCase();
-        return blockedWords.stream().anyMatch(lower::contains);
+        return wordFilterService.containsBlockedWord(message);
     }
 }

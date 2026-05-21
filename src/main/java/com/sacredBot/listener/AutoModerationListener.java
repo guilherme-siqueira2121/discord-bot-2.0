@@ -1,6 +1,7 @@
 package com.sacredBot.listener;
 
 import com.sacredBot.service.AutoModerationService;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -14,7 +15,6 @@ public class AutoModerationListener extends ListenerAdapter {
 
     private final AutoModerationService autoModerationService;
 
-
     public AutoModerationListener(AutoModerationService autoModerationService) {
         this.autoModerationService = autoModerationService;
     }
@@ -26,7 +26,7 @@ public class AutoModerationListener extends ListenerAdapter {
         Member member = event.getMember();
         if (member == null) return;
 
-        if (member.hasPermission(net.dv8tion.jda.api.Permission.MESSAGE_MANAGE)) return;
+        if (member.hasPermission(Permission.ADMINISTRATOR)) return;
 
         String content = event.getMessage().getContentRaw();
 
